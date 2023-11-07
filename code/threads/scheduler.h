@@ -12,6 +12,7 @@
 #include "copyright.h"
 #include "list.h"
 #include "thread.h"
+#include <bits/stdc++.h>
 
 // The following class defines the scheduler/dispatcher abstraction --
 // the data structures and operations needed to keep track of which
@@ -21,6 +22,7 @@ class Scheduler {
    public:
     Scheduler();   // Initialize list of ready threads
     ~Scheduler();  // De-allocate ready list
+    Scheduler(bool priority);
 
     void ReadyToRun(Thread* thread);
     // Thread can be dispatched.
@@ -35,10 +37,19 @@ class Scheduler {
     // SelfTest for scheduler is implemented in class Thread
 
    private:
+   bool isPriority;
     List<Thread*>* readyList;  // queue of threads that are ready to run,
                                // but not running
     Thread* toBeDestroyed;     // finishing thread to be destroyed
                                // by the next thread that runs
+   
+   struct Comparator{
+      bool operator()(const pair<int, Thread*>& a, const pair<int, Thread*>& b){
+         return a.first>b.first;
+      }
+   };
+
+   priority_queue<pair<int,Thread*>, vector<pair<int, Thread*>>, Comparator> pq;
 };
 
 #endif  // SCHEDULER_H

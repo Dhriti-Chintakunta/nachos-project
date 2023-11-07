@@ -234,6 +234,14 @@ PrintString:
 	j	$31
 	.end PrintString
 
+	.globl PrintDhriti
+	.ent PrintDhriti
+PrintString:
+	addiu $2,$0,SC_PrintDhriti
+	syscall
+	j	$31
+	.end PrintDhriti
+
 	.globl CreateFile
 	.ent	CreateFile
 CreateFile:
