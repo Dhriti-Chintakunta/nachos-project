@@ -40,6 +40,8 @@ class Kernel {
                                      // from constructor because
                                      // refers to "kernel" as a global
 
+    bool mysleep= false;
+    
     void ThreadSelfTest();  // self test of threads and synchronization
 
     void ConsoleTest();  // interactive console self test

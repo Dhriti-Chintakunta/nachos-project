@@ -242,6 +242,14 @@ PrintString:
 	j	$31
 	.end PrintDhriti
 
+	.globl SleepThread
+	.ent	SleepThread
+SleepThread:
+	addiu $2,$0,SC_SleepThread
+	syscall
+	j	$31
+	.end SleepThread
+
 	.globl CreateFile
 	.ent	CreateFile
 CreateFile:

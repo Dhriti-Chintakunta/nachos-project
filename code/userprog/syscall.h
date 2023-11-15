@@ -49,6 +49,7 @@
 #define SC_Signal 53
 #define SC_GetPid 54
 #define SC_PrintDhriti 55
+#define SC_SleepThread 56
 
 #ifndef IN_ASM
 
@@ -87,7 +88,7 @@ void PrintString(char *buffer);
 
 void PrintDhriti(char *buffer);
 
-
+void SleepThread(int time);
 /* Address space control operations: Exit, Exec, Execv, and Join */
 
 /* This user program is done (status = 0 means exited normally). */

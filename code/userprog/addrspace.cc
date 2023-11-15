@@ -103,6 +103,7 @@ AddrSpace::~AddrSpace() {
 
 AddrSpace::AddrSpace(char *fileName) {
     OpenFile *executable = kernel->fileSystem->Open(fileName);
+    kernel->currentThread->executable=executable;
     NoffHeader noffH;
     unsigned int i, size, j, offset;
     unsigned int numCodePage,
@@ -150,7 +151,7 @@ AddrSpace::AddrSpace(char *fileName) {
         pageTable[i].virtualPage = i;  // for now, virtual page # = phys page #
         pageTable[i].physicalPage = kernel->gPhysPageBitMap->FindAndSet();
         // cerr << pageTable[i].physicalPage << endl;
-        pageTable[i].valid = TRUE;
+        pageTable[i].valid = FALSE;
         pageTable[i].use = FALSE;
         pageTable[i].dirty = FALSE;
         pageTable[i].readOnly = FALSE;  // if the code segment was entirely on
@@ -163,24 +164,28 @@ AddrSpace::AddrSpace(char *fileName) {
         DEBUG(dbgAddr, "phyPage " << pageTable[i].physicalPage);
     }
 
-    if (noffH.code.size > 0) {
-        for (i = 0; i < numPages; i++)
-            executable->ReadAt(
-                &(kernel->machine->mainMemory[noffH.code.virtualAddr]) +
-                    (pageTable[i].physicalPage * PageSize),
-                PageSize, noffH.code.inFileAddr + (i * PageSize));
-    }
+    kernel->currentThread->code_Vaddr=noffH.code.virtualAddr;
+    kernel->currentThread->inFile_Vaddr=noffH.code.inFileAddr;
 
-    if (noffH.initData.size > 0) {
-        for (i = 0; i < numPages; i++)
-            executable->ReadAt(
-                &(kernel->machine->mainMemory[noffH.initData.virtualAddr]) +
-                    (pageTable[i].physicalPage * PageSize),
-                PageSize, noffH.initData.inFileAddr + (i * PageSize));
-    }
+
+    // if (noffH.code.size > 0) {
+    //     for (i = 0; i < numPages; i++)
+    //         executable->ReadAt(
+    //             &(kernel->machine->mainMemory[noffH.code.virtualAddr]) +
+    //                 (pageTable[i].physicalPage * PageSize),
+    //             PageSize, noffH.code.inFileAddr + (i * PageSize));
+    // }
+
+    // if (noffH.initData.size > 0) {
+    //     for (i = 0; i < numPages; i++)
+    //         executable->ReadAt(
+    //             &(kernel->machine->mainMemory[noffH.initData.virtualAddr]) +
+    //                 (pageTable[i].physicalPage * PageSize),
+    //             PageSize, noffH.initData.inFileAddr + (i * PageSize));
+    // }
 
     kernel->addrLock->V();
-    delete executable;
+    //delete executable;
     return;
 }
 

@@ -47,4 +47,18 @@ void Alarm::CallBack() {
     if (status != IdleMode) {
         interrupt->YieldOnReturn();
     }
+    wakeSleeping();
+}
+
+void Alarm:: wakeSleeping(){
+    if(kernel->mysleep==true){}
+    while(!sleepingThreads.empty() && sleepingThreads.top().first<=kernel->stats->totalTicks){
+        Thread* thread=sleepingThreads.top().second;
+        sleepingThreads.pop();
+        kernel->scheduler->ReadyToRun(thread);
+    }
+}
+
+void Alarm:: putToSleep(Thread* thread, int time){
+    sleepingThreads.push(make_pair(time,thread));
 }

@@ -217,6 +217,12 @@ void handle_SC_PrintDhriti() {
     return move_program_counter();
 }
 
+void handle_SC_SleepThread(){
+    kernel->mysleep=true;
+    SysSleepThread(kernel->machine->ReadRegister(4));
+    return move_program_counter();
+}
+
 
 void handle_SC_CreateFile() {
     int virtAddr = kernel->machine->ReadRegister(4);
@@ -405,6 +411,9 @@ void handle_SC_GetPid() {
 }
 
 void ExceptionHandler(ExceptionType which) {
+    unsigned int fmem;
+    unsigned int vpn;
+
     int type = kernel->machine->ReadRegister(2);
 
     DEBUG(dbgSys, "Received Exception " << which << " type: " << type << "\n");
@@ -415,6 +424,14 @@ void ExceptionHandler(ExceptionType which) {
             DEBUG(dbgSys, "Switch to system mode\n");
             break;
         case PageFaultException:
+            fmem=kernel->machine->registers[BadVAddrReg];
+            vpn =(unsigned int) (fmem/PageSize);
+            kernel->currentThread->space->pageTable[vpn]. physicalPage=kernel->gPhysPageBitMap->FindAndSet();
+            kernel->currentThread->executable->ReadAt(&(kernel->machine->mainMemory[kernel->currentThread->code_Vaddr])+ (kernel->currentThread->space->pageTable[vpn].physicalPage* PageSize), PageSize, kernel->currentThread->inFile_Vaddr+(vpn* PageSize));
+            kernel->currentThread->space->pageTable[vpn].valid=TRUE;
+            return;
+            break;
+            
         case ReadOnlyException:
         case BusErrorException:
         case AddressErrorException:

@@ -110,6 +110,11 @@ class Thread {
     char *getName() { return (name); }
     void Print() { cout << name; }
     void SelfTest();  // test whether thread impl is working
+    void Sleep(int time);
+    unsigned int code_Vaddr;
+    unsigned int inFile_Vaddr;
+
+    OpenFile* executable;
 
    private:
     // some of the private data for this class is listed above

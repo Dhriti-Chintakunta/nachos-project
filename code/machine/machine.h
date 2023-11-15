@@ -142,6 +142,7 @@ class Machine {
 
     bool ReadMem(int addr, int size, int *value);
     bool WriteMem(int addr, int size, int value);
+    int registers[NumTotalRegs];  // CPU registers, for executing user programs
     // Read or write 1, 2, or 4 bytes of virtual
     // memory (at addr).  Return FALSE if a
     // correct translation couldn't be found.
@@ -170,7 +171,7 @@ class Machine {
 
     // Internal data structures
 
-    int registers[NumTotalRegs];  // CPU registers, for executing user programs
+    
 
     bool singleStep;   // drop back into the debugger after each
                        // simulated instruction
